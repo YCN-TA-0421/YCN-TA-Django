@@ -8,6 +8,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
+from .variables import df
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -28,5 +29,11 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 def five_names(request):
-    df = pd.read_excel('nevo_online_2019.xlsx')
     return JsonResponse(json.loads(df[['Productgroep_oms', 'Product_omschrijving']].head().to_json()))
+
+# def macro_nutrients(request):
+#     request.
+
+def test_pivot(request):
+    x = df.loc[0:5, ['Productgroep_oms', 'Product_omschrijving', 'ENERCC_kcal', 'PROT_g', 'CHO_g', 'FAT_g']]
+    return JsonResponse(json.loads(x.to_json(orient='table')))
