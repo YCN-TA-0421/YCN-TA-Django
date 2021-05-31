@@ -4,13 +4,19 @@ from django.http import HttpResponse, JsonResponse
 import pandas as pd
 import json
 
-# Create your views here.
 from django.contrib.auth.models import User, Group
-from rest_framework import viewsets
+from rest_framework import HTTP_HEADER_ENCODING, serializers, viewsets
 from rest_framework import permissions
+from rest_framework.utils import serializer_helpers
 from .serializers import UserSerializer, GroupSerializer
 from .variables import df
 
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.parsers import JSONParser
+from api.models import Food
+from api.serializers import FoodSerializer
+
+# Create your views here.
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -102,3 +108,44 @@ def macro_nutrients(request):
 def test_pivot(request):
     x = df.loc[0:5, ['Productgroep_oms', 'Product_omschrijving', 'ENERCC_kcal', 'PROT_g', 'CHO_g', 'FAT_g']]
     return JsonResponse(json.loads(x.to_json(orient='table')))
+
+
+@csrf_exempt
+def food_list(request):
+    if request.method == 'GET':
+        foods = Food.objects.all()
+        serializer = FoodSerializer(foods, many=True)
+        return JsonResponse(serializer.data, safe=False)
+    
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = FoodSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+
+
+@csrf_exempt
+def food_detail(request, pk):
+    try:
+        food = Food.objects.get(pk=pk)
+    except Food.DoesNotExist:
+        return HttpResponse(status=404)
+
+    if request.method == 'GET':
+        serializer = FoodSerializer(food)
+        return JsonResponse(serializer.data)
+    
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer = FoodSerializer(food, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors, status=400)
+    
+    elif request.method == 'DELETE':
+        serializer = FoodSerializer(food)
+        food.delete()
+        return JsonResponse(serializer.data)
