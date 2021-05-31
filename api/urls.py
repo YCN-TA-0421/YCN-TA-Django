@@ -12,5 +12,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('five-names', views.five_names, name='five_names'),
+    path('macro-nutrients/', views.macro_nutrients),
     path('test', views.test_pivot),
 ]
