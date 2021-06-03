@@ -1,20 +1,23 @@
+
+import pandas as pd
+import json
 from django.http.response import Http404, HttpResponseBadRequest
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-import pandas as pd
-import json
-
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User, Group
-from rest_framework import HTTP_HEADER_ENCODING, serializers, viewsets
-from rest_framework import permissions
+from pandas.io import api
+from rest_framework import HTTP_HEADER_ENCODING, serializers, viewsets, permissions, status
+from rest_framework.decorators import api_view
 from rest_framework.utils import serializer_helpers
+from rest_framework.parsers import JSONParser
 from .serializers import UserSerializer, GroupSerializer
 from .variables import df
-
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.parsers import JSONParser
-from api.models import Food
+from api.models import Food, PRODUCTGROEP_OMS_CHOICES
 from api.serializers import FoodSerializer
+
+
+
 
 # Create your views here.
 
@@ -82,6 +85,7 @@ def macro_nutrients_search(request):
     return HttpResponse(repr(request.GET) + ' ' + str('limit' in request.GET))
 
 
+
 def macro_nutrients(request):
     if request.method == 'GET':
         if 'index' in request.GET.keys():
@@ -110,7 +114,16 @@ def test_pivot(request):
     return JsonResponse(json.loads(x.to_json(orient='table')))
 
 
-@csrf_exempt
+@api_view(['GET'])
+def food_groups(request):
+    if request.method =='GET':
+        # food_groups = {index: group[0]
+        #                for index, group in enumerate(PRODUCTGROEP_OMS_CHOICES)}
+        # return JsonResponse(food_groups)
+        return JsonResponse([group[0] for group in PRODUCTGROEP_OMS_CHOICES], safe=False)
+
+
+@api_view(['GET', 'POST'])
 def food_list(request):
     if request.method == 'GET':
         foods = Food.objects.all()
@@ -118,32 +131,37 @@ def food_list(request):
         return JsonResponse(serializer.data, safe=False)
     
     elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = FoodSerializer(data=data)
+        serializer = FoodSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@csrf_exempt
+@api_view(['GET', 'PUT', 'DELETE'])
 def food_detail(request, pk):
     try:
+        pk = int(pk)
         food = Food.objects.get(pk=pk)
+    except ValueError:
+        try:
+            food = Food.objects.get(Product_omschrijving=pk)
+        except Food.DoesNotExist:
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
     except Food.DoesNotExist:
-        return HttpResponse(status=404)
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+    
 
     if request.method == 'GET':
         serializer = FoodSerializer(food)
         return JsonResponse(serializer.data)
     
     elif request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = FoodSerializer(food, data=data)
+        serializer = FoodSerializer(food, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     elif request.method == 'DELETE':
         serializer = FoodSerializer(food)

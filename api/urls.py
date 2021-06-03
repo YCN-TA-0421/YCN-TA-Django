@@ -1,5 +1,6 @@
 from django.urls import include, path
 from rest_framework import routers
+from rest_framework.urlpatterns import format_suffix_patterns
 from . import views
 
 router = routers.DefaultRouter()
@@ -15,5 +16,6 @@ urlpatterns = [
     # path('macro-nutrients/', views.macro_nutrients),
     path('test', views.test_pivot),
     path('macro-nutrients/', views.food_list),
-    path('macro-nutrients/<int:pk>', views.food_detail),
+    path('macro-nutrients/<str:pk>', views.food_detail),
+    path('food-groups', views.food_groups),
 ]
