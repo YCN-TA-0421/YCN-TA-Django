@@ -17,5 +17,7 @@ urlpatterns = [
     path('test', views.test_pivot),
     path('macro-nutrients/', views.food_list),
     path('macro-nutrients/<str:pk>', views.food_detail),
+    path('macro-nutrients/index/<int:pk>', views.food_detail_index),
     path('food-groups', views.food_groups),
+    # path('load_database', views.load_database),
 ]

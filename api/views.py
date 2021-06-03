@@ -137,7 +137,7 @@ def food_list(request):
             return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+# TODO: Allow for getting multiple items with the same name or /index/
 @api_view(['GET', 'PUT', 'DELETE'])
 def food_detail(request, pk):
     try:
@@ -167,3 +167,26 @@ def food_detail(request, pk):
         serializer = FoodSerializer(food)
         food.delete()
         return JsonResponse(serializer.data)
+
+@api_view(['GET'])
+def food_detail_index(request, pk):
+    try:
+        food = Food.objects.get(index=pk)
+    except Food.DoesNotExist:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = FoodSerializer(food)
+        return JsonResponse(serializer.data)
+
+# def load_database(request):
+#     all_data = json.loads(df[['Product_omschrijving', 'Productgroep_oms', 'ENERCC_kcal', 'PROT_g', 'CHO_g', 'FAT_g']].to_json(orient='table'))
+#     errors = {}
+#     for index, data in enumerate(all_data['data']):
+#         serializer = FoodSerializer(data=data)
+#         if serializer.is_valid():
+#             serializer.save()
+#         else:
+#             errors[f'{index}'] = 'Invalid data'
+#     JsonResponse(errors, status=status.HTTP_200_OK)
+        
