@@ -1,5 +1,6 @@
 from django.urls import include, path
 from rest_framework import routers
+from rest_framework.urlpatterns import format_suffix_patterns
 from . import views
 
 router = routers.DefaultRouter()
@@ -12,5 +13,11 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('five-names', views.five_names, name='five_names'),
+    # path('macro-nutrients/', views.macro_nutrients),
     path('test', views.test_pivot),
+    path('macro-nutrients/', views.food_list),
+    path('macro-nutrients/<str:pk>', views.food_detail),
+    path('macro-nutrients/index/<int:pk>', views.food_detail_index),
+    path('food-groups', views.food_groups),
+    # path('load_database', views.load_database),
 ]
