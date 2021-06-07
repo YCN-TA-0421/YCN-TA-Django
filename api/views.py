@@ -17,8 +17,6 @@ from api.models import Food, PRODUCTGROEP_OMS_CHOICES
 from api.serializers import FoodSerializer
 
 
-
-
 # Create your views here.
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -116,6 +114,10 @@ def test_pivot(request):
 
 @api_view(['GET'])
 def food_groups(request):
+    """
+    get:
+    Returns the list of all food-groups available.
+    """
     if request.method =='GET':
         # food_groups = {index: group[0]
         #                for index, group in enumerate(PRODUCTGROEP_OMS_CHOICES)}
@@ -125,6 +127,13 @@ def food_groups(request):
 
 @api_view(['GET', 'POST'])
 def food_list(request):
+    """
+    get:
+    Returns a list of all food items.
+
+    post:
+    Adds a new food item if the data given is valid.
+    """
     if request.method == 'GET':
         foods = Food.objects.all()
         serializer = FoodSerializer(foods, many=True)
@@ -140,6 +149,16 @@ def food_list(request):
 # TODO: Allow for getting multiple items with the same name or /index/
 @api_view(['GET', 'PUT', 'DELETE'])
 def food_detail(request, pk):
+    """
+    get:
+    Returns the food object corrosponding to the input id.
+    
+    put:
+    Edits the food object corrosponding to the input id if the data given is valid.
+
+    delete:
+    Deletes the food object corrosponding to the input id.
+    """ 
     try:
         pk = int(pk)
         food = Food.objects.get(pk=pk)
@@ -169,9 +188,28 @@ def food_detail(request, pk):
         return JsonResponse(serializer.data)
 
 @api_view(['GET'])
-def food_detail_index(request, pk):
+def food_detail_index(request, index):
+    """
+    get:
+    Returns a food object based on the index field.
+    """
     try:
-        food = Food.objects.get(index=pk)
+        food = Food.objects.get(index=index)
+    except Food.DoesNotExist:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = FoodSerializer(food)
+        return JsonResponse(serializer.data)
+
+@api_view(['GET'])
+def food_detail_name(request, name):
+    """
+    get:
+    Returns a food object based on the Product_omschrijving field.
+    """
+    try:
+        food = Food.objects.get(Product_omschrijving=name)
     except Food.DoesNotExist:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
