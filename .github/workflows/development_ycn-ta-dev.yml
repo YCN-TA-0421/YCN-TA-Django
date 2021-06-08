@@ -34,11 +34,11 @@ jobs:
     - name: Create env file
       uses: SpicyPizza/create-envfile@v1
       with:
-        AZURE_NAME: ${{ secrets.AZURE_NAME }}
-        AZURE_HOST: ${{ secrets.AZURE_HOST }}
-        AZURE_Uid: ${{ secrets.AZURE_USER }}
-        AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        envkey_AZURE_NAME: ${{ secrets.AZURE_NAME }}
+        envkey_AZURE_HOST: ${{ secrets.AZURE_HOST }}
+        envkey_AZURE_Uid: ${{ secrets.AZURE_USER }}
+        envkey_AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
+        envkey_SECRET_KEY: ${{ secrets.SECRET_KEY }}
         file_name: .env
 
     - name: Upload artifact for deployment jobs
