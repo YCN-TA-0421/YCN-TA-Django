@@ -39,6 +39,7 @@ jobs:
         envkey_AZURE_Uid: ${{ secrets.AZURE_USER }}
         envkey_AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
         envkey_SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        envkey_ON_AZURE: True
         file_name: .env
 
     - name: Upload artifact for deployment jobs
