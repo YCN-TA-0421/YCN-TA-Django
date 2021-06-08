@@ -36,7 +36,7 @@ jobs:
       with:
         envkey_AZURE_NAME: ${{ secrets.AZURE_NAME }}
         envkey_AZURE_HOST: ${{ secrets.AZURE_HOST }}
-        envkey_AZURE_Uid: ${{ secrets.AZURE_USER }}
+        envkey_AZURE_USER: ${{ secrets.AZURE_USER }}
         envkey_AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
         envkey_SECRET_KEY: ${{ secrets.SECRET_KEY }}
         envkey_ON_AZURE: True

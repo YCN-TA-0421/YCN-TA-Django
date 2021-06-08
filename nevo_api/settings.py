@@ -92,7 +92,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'sql_server.pyodbc',
         'NAME': os.environ.get('AZURE_NAME'),
-        'USER': os.environ.get('AZURE_Uid'),
+        'USER': os.environ.get('AZURE_USER'),
         'PASSWORD': os.environ.get('AZURE_PASSWORD'),
         'HOST': os.environ.get('AZURE_HOST'),
         'PORT': os.environ.get('AZURE_PORT'),
