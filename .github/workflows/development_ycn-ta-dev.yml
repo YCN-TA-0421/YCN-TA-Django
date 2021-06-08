@@ -31,6 +31,15 @@ jobs:
       run: pip install -r requirements.txt
 
     # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
+    - name: Create env file
+        run: |
+          touch .env
+          echo AZURE_NAME=${{ secrets.AZURE_NAME }} >> .env
+          echo AZURE_HOST=${{ secrets.AZURE_HOST }} >> .env
+          echo AZURE_Uid=${{ secrets.AZURE_USER }} >> .env
+          echo AZURE_PASSWORD=${{ secrets.AZURE_PASSWORD }} >> .env
+          echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+          cat .env
 
     - name: Upload artifact for deployment jobs
       uses: actions/upload-artifact@v2
