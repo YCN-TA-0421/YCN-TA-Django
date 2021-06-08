@@ -39,6 +39,7 @@ jobs:
         AZURE_Uid: ${{ secrets.AZURE_USER }}
         AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        file_name: .env
 
     - name: Upload artifact for deployment jobs
       uses: actions/upload-artifact@v2
