@@ -1,6 +1,7 @@
 .venv/
 .vscode/
 .azure/
+.env
 
 # From GitHub
 # Byte-compiled / optimized / DLL files
