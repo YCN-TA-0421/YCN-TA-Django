@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'django-insecure-2y=^h^!0w_*q*qeo8m_h4=b0o9)age!5uwk+83sy&75il!&uot'
 load_dotenv()
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = 'wedoengezelligeensecretkey'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -93,11 +93,11 @@ WSGI_APPLICATION = 'nevo_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'sql_server.pyodbc',
-        'NAME': os.environ.get('AZURE_NAME'),
-        'USER': os.environ.get('AZURE_USER'),
-        'PASSWORD': os.environ.get('AZURE_PASSWORD'),
-        'HOST': os.environ.get('AZURE_HOST'),
-        'PORT': os.environ.get('AZURE_PORT'),
+        'NAME': 'Django',
+        'USER': 'mariek1510',
+        'PASSWORD': 'SJi3svp6dpC87gq',
+        'HOST': 'yc2104django.database.windows.net',
+        'PORT': 1433,
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
         },
