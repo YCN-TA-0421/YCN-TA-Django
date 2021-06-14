@@ -15,6 +15,7 @@ from .serializers import UserSerializer, GroupSerializer
 from .variables import df
 from api.models import Food, PRODUCTGROEP_OMS_CHOICES
 from api.serializers import FoodSerializer
+from .search_algorithm import search_indices, search_objects
 
 
 # Create your views here.
@@ -216,6 +217,23 @@ def food_detail_name(request, name):
     if request.method == 'GET':
         serializer = FoodSerializer(food)
         return JsonResponse(serializer.data)
+
+@api_view(['GET'])
+def food_detail_search(request, input_str):
+    """
+    get:
+    Returns a list of food objects that match the input_str by name.
+    """
+
+    if request.method == 'GET':
+        # indices = search_indices(input_str)
+        foods = search_objects(input_str)
+        if foods:
+            serializer = FoodSerializer(foods, many=True)
+            return JsonResponse(serializer.data, safe=False)
+        else:
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+    
 
 # def load_database(request):
 #     all_data = json.loads(df[['Product_omschrijving', 'Productgroep_oms', 'ENERCC_kcal', 'PROT_g', 'CHO_g', 'FAT_g']].to_json(orient='table'))
