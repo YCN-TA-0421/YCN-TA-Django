@@ -87,9 +87,9 @@ WSGI_APPLICATION = 'nevo_api.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-AZURE_USER = os.environ.get('AZURE_USER')
-if AZURE_USER is None:
-    AZURE_USER = 'azureuser'
+# AZURE_USER = os.environ.get('AZURE_USER')
+# if AZURE_USER is None:
+#     AZURE_USER = 'azureuser'
 DATABASES = {
     'default': {
         'ENGINE': 'sql_server.pyodbc',
