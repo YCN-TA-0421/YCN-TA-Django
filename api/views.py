@@ -15,8 +15,8 @@ from .serializers import UserSerializer, GroupSerializer
 from .variables import df
 from api.models import Food, PRODUCTGROEP_OMS_CHOICES
 from api.serializers import FoodSerializer
-from .search_algorithm import search_indices, search_objects
-
+from .search_algorithm import search_objects
+from .replacement_algorithm import get_replacement
 
 # Create your views here.
 
@@ -234,6 +234,27 @@ def food_detail_search(request, input_str):
             return JsonResponse(serializer.data, safe=False)
         else:
             return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+def food_replacement(request, pk, diet=None):
+    """
+    get:
+    Returns the 10 products that best match the food object whose ID was given as input.
+    Takes an optional argument diet for when you want to specify a certain diet to choose from. By default any food object is allowed.
+    The options are: regular diet, vegetarian diet, vegan diet
+    """
+    # diet = 'vegetarian diet'
+    try:
+        food = Food.objects.get(pk=pk)
+    except Food.DoesNotExist:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        foods = get_replacement(food, diet)
+        if foods is None:
+            return HttpResponse(f"Invalid food index (required to be between 0 and 2151) or diet: food index={food.index}, diet={diet}")
+        serializer = FoodSerializer(foods, many=True)
+        return JsonResponse(serializer.data, safe=False)
     
 
 # def load_database(request):
