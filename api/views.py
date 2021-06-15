@@ -222,7 +222,8 @@ def food_detail_name(request, name):
 def food_detail_search(request, input_str):
     """
     get:
-    Returns a list of food objects that match the input_str by name.
+    Returns a list of the food objects that match the input_str best by name, with a maximum of 10 objects.
+    Takes in account the name, the reconstructed name (ui zilver- is also seen as zilverui) or synonym.
     """
 
     if request.method == 'GET':

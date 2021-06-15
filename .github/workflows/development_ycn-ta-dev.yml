@@ -70,4 +70,4 @@ jobs:
         with:
           app-name: 'ycn-ta-dev'
           slot-name: 'production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_edec7f9f9c76443b9f8b2893d83840df }}
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_bfc198fe69d042349b4bef44f05a4c28 }}
