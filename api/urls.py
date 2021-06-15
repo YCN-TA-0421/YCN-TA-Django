@@ -20,6 +20,8 @@ urlpatterns = [
     path('macro-nutrients/index/<int:index>', views.food_detail_index),
     path('macro-nutrients/name/<str:name>', views.food_detail_name),
     path('macro-nutrients/search/<str:input_str>', views.food_detail_search),
+    path('macro-nutrients/replacement/<int:pk>/<str:diet>', views.food_replacement),
+    path('macro-nutrients/replacement/<int:pk>', views.food_replacement),
     path('food-groups', views.food_groups),
     # path('docs/', include_docs_urls(title='Food API', public=False)),
     path('docs/', include_docs_urls(title='Food API')),
