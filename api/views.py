@@ -16,7 +16,7 @@ from .variables import df
 from api.models import Food, PRODUCTGROEP_OMS_CHOICES
 from api.serializers import FoodSerializer
 from .search_algorithm import search_objects
-from .replacement_algorithm import get_replacement
+from .replacement_algorithm import get_replacement, get_replacement_macronutrients
 
 # Create your views here.
 
@@ -126,7 +126,8 @@ def food_groups(request):
         return JsonResponse([group[0] for group in PRODUCTGROEP_OMS_CHOICES], safe=False)
 
 
-@api_view(['GET', 'POST'])
+# @api_view(['GET', 'POST'])
+@api_view(['GET'])
 def food_list(request):
     """
     get:
@@ -147,8 +148,9 @@ def food_list(request):
             return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# TODO: Allow for getting multiple items with the same name or /index/
-@api_view(['GET', 'PUT', 'DELETE'])
+
+# @api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET'])
 def food_detail(request, pk):
     """
     get:
@@ -243,7 +245,6 @@ def food_replacement(request, pk, diet=None):
     Takes an optional argument diet for when you want to specify a certain diet to choose from. By default any food object is allowed.
     The options are: regular diet, vegetarian diet, vegan diet
     """
-    # diet = 'vegetarian diet'
     try:
         food = Food.objects.get(pk=pk)
     except Food.DoesNotExist:
@@ -251,8 +252,29 @@ def food_replacement(request, pk, diet=None):
     
     if request.method == 'GET':
         foods = get_replacement(food, diet)
-        if foods is None:
-            return HttpResponse(f"Invalid food index (required to be between 0 and 2151) or diet: food index={food.index}, diet={diet}")
+        if isinstance(foods, int):
+            if foods == -1:
+                return HttpResponse(f"Invalid diet: {diet}", status.HTTP_400_BAD_REQUEST)
+            elif food == -2:
+                return HttpResponse(f"Invalid food index (required to be between 0 and {len(df) - 1}): {food.index}", status.HTTP_400_BAD_REQUEST)
+            else:
+                return HttpResponse(f"Unexpected error code, could not return useful information.", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        serializer = FoodSerializer(foods, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+
+@api_view(['GET'])
+def food_replacement_macronutrients(request, protein, carbohydrates, fat, diet=None):
+    """
+    get:
+    Returns the 10 products that best match the (hypothetical) food with given amounts of protein, carbohydrates and fat in grams.
+    Takes an optional argument diet for when you want to specify a certain diet to choose from. By default any food object is allowed.
+    The options are: regular diet, vegetarian diet, vegan diet
+    """
+    if request.method == 'GET':
+        foods = get_replacement_macronutrients(protein, carbohydrates, fat, diet)
+        if isinstance(foods, int) and foods == -1:
+            return HttpResponse(f"Invalid diet: {diet}", status.HTTP_400_BAD_REQUEST)
         serializer = FoodSerializer(foods, many=True)
         return JsonResponse(serializer.data, safe=False)
     

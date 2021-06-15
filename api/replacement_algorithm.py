@@ -173,7 +173,7 @@ def get_replacement(food_to_replace, diet):
      If the argument doesn't conform to one of those four options the function returns None.
     """
     if not (0 <= food_to_replace.index < len(df)):
-        return
+        return -1
     else:
         index = food_to_replace.index
     
@@ -186,9 +186,48 @@ def get_replacement(food_to_replace, diet):
     elif diet is None:
         df_to_select_from = df
     else:
-        return
+        return -2
 
     results = show_most_alike(df_to_select_from, df.loc[[index]], ['PROT_g', 'CHO_g', 'FAT_g'])
+
+    foods = []
+    for index in results.index:
+        foods.append(Food.objects.get(index=index))
+    
+    return foods
+
+
+def get_replacement_macronutrients(protein, carbohydrates, fat, diet):
+    """
+    Expects protein, carbohydrates and fat in grams.
+    Expects a string that is either 'regular diet', 'vegetarian diet', or 'vegan diet'. If none is given the whole dataset is used.
+     If the argument doesn't conform to one of those four options the function returns None.
+    """
+    if diet == 'regular diet':
+        df_to_select_from = df_regular_diet
+    elif diet == 'vegetarian diet':
+        df_to_select_from = df_vegetarian
+    elif diet == 'vegan diet':
+        df_to_select_from = df_vegan
+    elif diet is None:
+        df_to_select_from = df
+    else:
+        return -1
+
+    new_food = df.loc[[0]].copy()
+    new_food['Product_omschrijving'] = 'Generated'
+    new_food['Product_description'] = None
+    new_food['Product_synoniemen'] = None
+    new_food['Productgroep_oms'] = 'Generated'
+    new_food['Productgroepcode'] = 0
+    new_food['Productcode'] = 0
+    new_food['PROT_g'] = protein
+    new_food['CHO_g'] = carbohydrates
+    new_food['FAT_g'] = fat
+    scaled_values = scale_df(new_food, useful_numerical_columns).values
+    for index, one_column in enumerate(useful_numerical_columns):
+        new_food[f"Scaled_{one_column}"] = scaled_values[:, index]
+    results = show_most_alike(df_to_select_from, new_food, ['PROT_g', 'CHO_g', 'FAT_g'])
 
     foods = []
     for index in results.index:
