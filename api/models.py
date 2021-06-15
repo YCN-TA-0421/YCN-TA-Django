@@ -3,10 +3,11 @@ from .variables import df
 
 PRODUCTGROEP_OMS_CHOICES = [(item, item) for item in sorted(df.Productgroep_oms.unique())]
 
+
 # Create your models here.
 class Food(models.Model):
     created = models.DateTimeField(auto_now_add=True)
-    index = models.IntegerField(blank=True, default = -1)
+    index = models.IntegerField(blank=True, default=-1)
     Productgroepcode =      models.IntegerField()
     Productgroep_oms =      models.CharField(choices=PRODUCTGROEP_OMS_CHOICES, default='Diversen', max_length=100, help_text=f"Choose one of the following: {PRODUCTGROEP_OMS_CHOICES}")
     Productcode =           models.IntegerField(null=True, default=-1)
@@ -152,8 +153,9 @@ class Food(models.Model):
     FOLAC_mug =             models.FloatField(null=True)
     VITC_mg =               models.FloatField(null=True)
 
+
 class Food_analysis(models.Model):
-    index = models.IntegerField(blank=True, default = -1)
+    index = models.IntegerField(blank=True, default=-1)
     Productgroepcode =      models.IntegerField()
     Productgroep_oms =      models.CharField(choices=PRODUCTGROEP_OMS_CHOICES, default='Diversen', max_length=100, help_text=f"Choose one of the following: {PRODUCTGROEP_OMS_CHOICES}")
     Productcode =           models.IntegerField(null=True, default=-1)

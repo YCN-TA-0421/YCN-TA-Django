@@ -20,6 +20,7 @@ from .replacement_algorithm import get_replacement, get_replacement_macronutrien
 
 # Create your views here.
 
+
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -37,6 +38,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+
 def five_names(request):
     return JsonResponse(json.loads(df[['Productgroep_oms', 'Product_omschrijving']].head().to_json()))
 
@@ -49,7 +51,7 @@ def macro_nutrients_index(request):
     index = request.GET.get('index')
     if not index:
         return HttpResponseBadRequest("Missing index value.")
-    
+
     try:
         # return JsonResponse(json.loads(df.loc[int(index), ['Productgroep_oms', 'Product_omschrijving', 'ENERCC_kcal', 'PROT_g', 'CHO_g', 'FAT_g']].to_json(orient='table')))
         return JsonResponse(dataframe_to_json(df.loc[[int(index)]]))
@@ -63,7 +65,7 @@ def macro_nutrients_name(request):
     name = request.GET.get('name')
     if not name:
         return HttpResponseBadRequest("Missing name value.")
-    
+
     return_value = df[df['Product_omschrijving'] == name]
     if len(return_value):
         return JsonResponse(dataframe_to_json(return_value))
@@ -82,7 +84,6 @@ def macro_nutrients_search(request):
     print(request.GET)
     print('')
     return HttpResponse(repr(request.GET) + ' ' + str('limit' in request.GET))
-
 
 
 def macro_nutrients(request):
@@ -108,6 +109,7 @@ def macro_nutrients(request):
         print('API POST request on macro_nutrients')
         return HttpResponse("Not implemented (yet)")
 
+
 def test_pivot(request):
     x = df.loc[0:5, ['Productgroep_oms', 'Product_omschrijving', 'ENERCC_kcal', 'PROT_g', 'CHO_g', 'FAT_g']]
     return JsonResponse(json.loads(x.to_json(orient='table')))
@@ -119,7 +121,7 @@ def food_groups(request):
     get:
     Returns the list of all food-groups available.
     """
-    if request.method =='GET':
+    if request.method == 'GET':
         # food_groups = {index: group[0]
         #                for index, group in enumerate(PRODUCTGROEP_OMS_CHOICES)}
         # return JsonResponse(food_groups)
@@ -140,7 +142,7 @@ def food_list(request):
         foods = Food.objects.all()
         serializer = FoodSerializer(foods, many=True)
         return JsonResponse(serializer.data, safe=False)
-    
+
     elif request.method == 'POST':
         serializer = FoodSerializer(data=request.data)
         if serializer.is_valid():
@@ -155,13 +157,13 @@ def food_detail(request, pk):
     """
     get:
     Returns the food object corrosponding to the input id.
-    
+
     put:
     Edits the food object corrosponding to the input id if the data given is valid.
 
     delete:
     Deletes the food object corrosponding to the input id.
-    """ 
+    """
     try:
         pk = int(pk)
         food = Food.objects.get(pk=pk)
@@ -172,23 +174,23 @@ def food_detail(request, pk):
             return HttpResponse(status=status.HTTP_404_NOT_FOUND)
     except Food.DoesNotExist:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-    
 
     if request.method == 'GET':
         serializer = FoodSerializer(food)
         return JsonResponse(serializer.data)
-    
+
     elif request.method == 'PUT':
         serializer = FoodSerializer(food, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     elif request.method == 'DELETE':
         serializer = FoodSerializer(food)
         food.delete()
         return JsonResponse(serializer.data)
+
 
 @api_view(['GET'])
 def food_detail_index(request, index):
@@ -205,6 +207,7 @@ def food_detail_index(request, index):
         serializer = FoodSerializer(food)
         return JsonResponse(serializer.data)
 
+
 @api_view(['GET'])
 def food_detail_name(request, name):
     """
@@ -219,6 +222,7 @@ def food_detail_name(request, name):
     if request.method == 'GET':
         serializer = FoodSerializer(food)
         return JsonResponse(serializer.data)
+
 
 @api_view(['GET'])
 def food_detail_search(request, input_str):
@@ -237,6 +241,7 @@ def food_detail_search(request, input_str):
         else:
             return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
+
 @api_view(['GET'])
 def food_replacement(request, pk, diet=None):
     """
@@ -249,7 +254,7 @@ def food_replacement(request, pk, diet=None):
         food = Food.objects.get(pk=pk)
     except Food.DoesNotExist:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-    
+
     if request.method == 'GET':
         foods = get_replacement(food, diet)
         if isinstance(foods, int):
@@ -277,7 +282,7 @@ def food_replacement_macronutrients(request, protein, carbohydrates, fat, diet=N
             return HttpResponse(f"Invalid diet: {diet}", status.HTTP_400_BAD_REQUEST)
         serializer = FoodSerializer(foods, many=True)
         return JsonResponse(serializer.data, safe=False)
-    
+
 
 # def load_database(request):
 #     all_data = json.loads(df[['Product_omschrijving', 'Productgroep_oms', 'ENERCC_kcal', 'PROT_g', 'CHO_g', 'FAT_g']].to_json(orient='table'))
@@ -289,4 +294,3 @@ def food_replacement_macronutrients(request, protein, carbohydrates, fat, diet=N
 #         else:
 #             errors[f'{index}'] = 'Invalid data'
 #     JsonResponse(errors, status=status.HTTP_200_OK)
-        
