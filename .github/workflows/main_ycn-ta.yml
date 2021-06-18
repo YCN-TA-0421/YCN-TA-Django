@@ -31,17 +31,6 @@ jobs:
       run: pip install -r requirements.txt
 
     # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
-    - name: Create env file
-      uses: SpicyPizza/create-envfile@v1
-      with:
-        envkey_AZURE_NAME: ${{ secrets.AZURE_NAME }}
-        envkey_AZURE_HOST: ${{ secrets.AZURE_HOST }}
-        envkey_AZURE_PORT: 1433
-        envkey_AZURE_USER: ${{ secrets.AZURE_USER }}
-        envkey_AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
-        envkey_SECRET_KEY: ${{ secrets.SECRET_KEY }}
-        envkey_ON_AZURE: True
-        file_name: .env
 
     - name: Upload artifact for deployment jobs
       uses: actions/upload-artifact@v2
@@ -70,4 +59,4 @@ jobs:
         with:
           app-name: 'ycn-ta'
           slot-name: 'production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_163e5d60b5734bb4b8aae1f957f5f501 }}
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_dd5c6d80bd2e477a9639667105539ed2 }}
