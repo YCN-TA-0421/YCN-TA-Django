@@ -34,12 +34,12 @@ jobs:
     - name: Create env file
       uses: SpicyPizza/create-envfile@v1
       with:
-        envkey_AZURE_NAME: ${{ secrets.AZURE_NAME }}
-        envkey_AZURE_HOST: ${{ secrets.AZURE_HOST }}
-        envkey_AZURE_PORT: 1433
-        envkey_AZURE_USER: ${{ secrets.AZURE_USER }}
-        envkey_AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
-        envkey_SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        envkey_FREEK_AZURE_NAME: ${{ secrets.FREEK_AZURE_NAME }}
+        envkey_FREEK_AZURE_HOST: ${{ secrets.FREEK_AZURE_HOST }}
+        envkey_FREEK_AZURE_PORT: ${{ secrets.FREEK_AZURE_PORT}}
+        envkey_FREEK_AZURE_USER: ${{ secrets.FREEK_AZURE_USER }}
+        envkey_FREEK_AZURE_PASSWORD: ${{ secrets.FREEK_AZURE_PASSWORD }}
+        envkey_FREEK_SECRET_KEY: ${{ secrets.FREEK_SECRET_KEY }}
         envkey_ON_AZURE: True
         file_name: .env
 
