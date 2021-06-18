@@ -93,11 +93,11 @@ WSGI_APPLICATION = 'nevo_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'sql_server.pyodbc',
-        'NAME': os.environ.get('AZURE_NAME'),
-        'USER': os.environ.get('AZURE_USER'),
-        'PASSWORD': os.environ.get('AZURE_PASSWORD'),
-        'HOST': os.environ.get('AZURE_HOST'),
-        'PORT': os.environ.get('AZURE_PORT'),
+        'NAME': os.environ.get('FREEK_AZURE_NAME'),
+        'USER': os.environ.get('FREEK_AZURE_USER'),
+        'PASSWORD': os.environ.get('FREEK_AZURE_PASSWORD'),
+        'HOST': os.environ.get('FREEK_AZURE_HOST'),
+        'PORT': os.environ.get('FREEK_AZURE_PORT'),
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
         },
