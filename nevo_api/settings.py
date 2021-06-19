@@ -97,7 +97,7 @@ DATABASES = {
         'USER': os.environ.get('FREEK_AZURE_USER'),
         'PASSWORD': os.environ.get('FREEK_AZURE_PASSWORD'),
         'HOST': os.environ.get('FREEK_AZURE_HOST'),
-        'PORT': os.environ.get('FREEK_AZURE_PORT'),
+        'PORT': 1433,
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
         },
