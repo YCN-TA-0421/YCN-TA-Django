@@ -16,9 +16,9 @@ def search_by_str(items, input_str):
             if isinstance(one_item, str) and one_word.lower() in one_item.lower():
                 for index_fragment, fragment in enumerate(one_item.strip().split()):
                     if one_word.lower() == fragment.lower():
-                        scores[index_item] += WEIGHTS[index_fragment if index_fragment < len(WEIGHTS) else len(WEIGHTS) -1] * EXACT_MATCH_MULT
+                        scores[index_item] += WEIGHTS[index_fragment if index_fragment < len(WEIGHTS) else len(WEIGHTS) - 1] * EXACT_MATCH_MULT
                     if one_word.lower() in fragment.lower():
-                        scores[index_item] += WEIGHTS[index_fragment if index_fragment < len(WEIGHTS) else len(WEIGHTS) -1]
+                        scores[index_item] += WEIGHTS[index_fragment if index_fragment < len(WEIGHTS) else len(WEIGHTS) - 1]
             scores[index_item] -= len(one_item.strip().split()) if isinstance(one_item, str) else 0
     return scores
 
@@ -40,11 +40,11 @@ def recombine_words(df):
     for one_item in df['Product_omschrijving'].values:
         splits = one_item.strip().split()
         if len(splits) > 1 and '-' == splits[1][-1]:
-            first_word = splits[1][:-1]+splits[0]
+            first_word = splits[1][:-1] + splits[0]
             results.append(' '.join([first_word] + splits[2:]))
         else:
             results.append(one_item)
-    return results     
+    return results
 
 
 def search_indices(input_str):
@@ -55,7 +55,7 @@ def search_indices(input_str):
 
     if not indices:
         indices = convert_scores_to_indices(search_by_str(recombine_words(df), input_str))
-    
+
     if not indices:
         indices = convert_scores_to_indices(search_by_str(df['Product_synoniemen'].values, input_str))
 

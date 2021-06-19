@@ -31,6 +31,17 @@ jobs:
       run: pip install -r requirements.txt
 
     # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
+    - name: Create env file
+      uses: SpicyPizza/create-envfile@v1
+      with:
+        envkey_FREEK_AZURE_NAME: ${{ secrets.FREEK_AZURE_NAME }}
+        envkey_FREEK_AZURE_HOST: ${{ secrets.FREEK_AZURE_HOST }}
+        envkey_FREEK_AZURE_PORT: ${{ secrets.FREEK_AZURE_PORT }}
+        envkey_FREEK_AZURE_USER: ${{ secrets.FREEK_AZURE_USER }}
+        envkey_FREEK_AZURE_PASSWORD: ${{ secrets.FREEK_AZURE_PASSWORD }}
+        envkey_FREEK_SECRET_KEY: ${{ secrets.FREEK_SECRET_KEY }}
+        envkey_ON_AZURE: True
+        file_name: .env
 
     - name: Upload artifact for deployment jobs
       uses: actions/upload-artifact@v2

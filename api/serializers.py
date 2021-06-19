@@ -20,6 +20,7 @@ class FoodSerializer(serializers.ModelSerializer):
         model = Food
         fields = ['id', 'index', 'created', 'Productgroep_oms', 'Product_omschrijving', 'ENERCC_kcal', 'PROT_g', 'CHO_g', 'FAT_g']
 
+
 class FoodAnalysisSerializer(serializers.ModelSerializer):
     class Meta:
         model = Food_analysis

@@ -53,6 +53,7 @@ for banned in blacklist + non_vegan:
         df_vegetarian[(df_vegetarian.Productgroep_oms == banned)].index
     )
 
+
 def show_most_alike(df_to_select_from, food_to_replace, columns, nr_of_results=10):
     number_of_results = nr_of_results * 2 if nr_of_results * 2 < len(df_to_select_from) else len(df_to_select_from)
     scaled_columns = [f"Scaled_{one_column}"
@@ -63,34 +64,32 @@ def show_most_alike(df_to_select_from, food_to_replace, columns, nr_of_results=1
     columns_extended = human_readable_columns + columns + scaled_columns
     columns_to_display = human_readable_columns + columns + ['Euclidian_distance'] + difference_columns
 
-
     df_euclidian = df_to_select_from[columns_extended].copy()
 
     scaled_values = df_euclidian[scaled_columns].values
     df_euclidian['Euclidian_distance'] = [np.linalg.norm(row)
-                                            for row in scaled_values - food_to_replace[scaled_columns].values]
+                                          for row in scaled_values - food_to_replace[scaled_columns].values]
     df_euclidian[difference_columns] = df_euclidian[columns].values - food_to_replace[columns].values
 
     df_results = pd.DataFrame()
     # Added np.unique() to only show everything with the same Euclidian distance once.
-    # As a side-effect this means that if the last of the selected distances is not unique in the whole list 
-    # everything with an identical value will still be shown resulting in more records than perhaps expected. This 
-    # can be useful as those different food items are equivalent for the analysis. However it might cause issues 
+    # As a side-effect this means that if the last of the selected distances is not unique in the whole list
+    # everything with an identical value will still be shown resulting in more records than perhaps expected. This
+    # can be useful as those different food items are equivalent for the analysis. However it might cause issues
     # if the results would be returned instead of displayed.
-    for euclidian_minimum in np.unique(sorted(
-        df_euclidian['Euclidian_distance'].values)[:number_of_results]):
+    for euclidian_minimum in np.unique(sorted(df_euclidian['Euclidian_distance'].values)[:number_of_results]):
         df_results = df_results.append(df_euclidian[df_euclidian['Euclidian_distance'] == euclidian_minimum])
-    
+
     # Return the results, omit the input food if present (it should have a euclidian distance of 0 and be on top)
     if (df_results.iloc[0][human_readable_columns + columns].values == food_to_replace[human_readable_columns + columns].values).all():
-        return df_results.iloc[1:nr_of_results+1]
+        return df_results.iloc[1:nr_of_results + 1]
     else:
         return df_results.iloc[:nr_of_results]
 
 
 def meandivide(y, columns):
     return y[columns] / np.sqrt(np.array([scaler.var_[useful_numerical_columns.index(one_column)]
-                                           for one_column in columns]))
+                                          for one_column in columns]))
 
 
 def scale_df(y, columns):
@@ -101,7 +100,7 @@ def scale_df(y, columns):
 
 def meandivide_np(y, columns):
     return y / np.sqrt(np.array([scaler.var_[useful_numerical_columns.index(one_column)]
-                                           for one_column in columns]))
+                                 for one_column in columns]))
 
 
 def scale_np(y, columns):
@@ -112,8 +111,8 @@ def scale_np(y, columns):
 
 def grams(to_replace, first_replace, columns):
     gramslist = []
-    
-    ## Plus
+
+    # Plus
     old_score = np.linalg.norm(meandivide_np(to_replace[columns].values - first_replace[columns].values, columns))
     var = 1 + 0.01
     new_score = np.linalg.norm(meandivide_np(to_replace[columns].values - var * first_replace[columns].values, columns))
@@ -123,9 +122,9 @@ def grams(to_replace, first_replace, columns):
         old_score = new_score
         var += .01
         new_score = np.linalg.norm(meandivide_np(to_replace[columns].values - var * first_replace[columns].values, columns))
-    gramslist.append((var,old_score))
+    gramslist.append((var, old_score))
 
-    ## Min
+    # Min
     old_score = np.linalg.norm(meandivide_np(to_replace[columns].values - first_replace[columns].values, columns))
     var = 1 - 0.01
     new_score = np.linalg.norm(meandivide_np(to_replace[columns].values - var * first_replace[columns].values, columns))
@@ -135,8 +134,8 @@ def grams(to_replace, first_replace, columns):
         old_score = new_score
         var -= .01
         new_score = np.linalg.norm(meandivide_np(to_replace[columns].values - var * first_replace[columns].values, columns))
-    gramslist.append((var,old_score))
-    
+    gramslist.append((var, old_score))
+
     if gramslist[0][1] < gramslist[1][1]:
         return gramslist[0][0]
     else:
@@ -155,13 +154,13 @@ def presentable_euclidian(food_to_replace, columns):
     human_readable_columns = ['Productgroep_oms', 'Product_omschrijving']
     df_results = food_to_replace[human_readable_columns + columns].copy()
     df_results['Amount_g'] = food_to_replace['Hoeveelheid'].values
-    
+
     df_results = df_results.append(euclidian(df, food_to_replace, columns))
     df_results = df_results.append(euclidian(df_vegetarian, food_to_replace, columns))
     df_results = df_results.append(euclidian(df_vegan, food_to_replace, columns))
     df_results['Type'] = ['Input', 'Regular diet replacement', 'Vegetarian replacement', 'Vegan replacement']
     df_results = df_results[[df_results.columns[-1]] + list(df_results.columns[:-1])]
-    
+
     return df_results
 
 
@@ -176,7 +175,7 @@ def get_replacement(food_to_replace, diet):
         return -1
     else:
         index = food_to_replace.index
-    
+
     if diet == 'regular diet':
         df_to_select_from = df_regular_diet
     elif diet == 'vegetarian diet':
@@ -193,7 +192,7 @@ def get_replacement(food_to_replace, diet):
     foods = []
     for index in results.index:
         foods.append(Food.objects.get(index=index))
-    
+
     return foods
 
 
@@ -232,5 +231,5 @@ def get_replacement_macronutrients(protein, carbohydrates, fat, diet):
     foods = []
     for index in results.index:
         foods.append(Food.objects.get(index=index))
-    
+
     return foods
